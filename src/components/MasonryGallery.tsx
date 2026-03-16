@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import type PhotoSwipe from "photoswipe";
 import "photoswipe/style.css";
@@ -23,6 +23,16 @@ export default function MasonryGallery({
   gap = "16px",
   className,
 }: MasonryGalleryProps) {
+  const [allLoaded, setAllLoaded] = useState(false);
+  const loadedCount = useRef(0);
+
+  const handleImageLoad = useCallback(() => {
+    loadedCount.current += 1;
+    if (loadedCount.current >= photos.length) {
+      setAllLoaded(true);
+    }
+  }, [photos.length]);
+
   const options = {
     zoom: false,
     wheelToZoom: false,
@@ -83,7 +93,11 @@ export default function MasonryGallery({
       <ul
         className={["masonry", className].filter(Boolean).join(" ")}
         role="list"
-        style={{ ["--gap" as any]: gap }}
+        style={{
+          ["--gap" as any]: gap,
+          opacity: allLoaded ? 1 : 0,
+          transition: "opacity 0.6s ease-in",
+        }}
       >
         {photos.map((photo) => (
           <li key={photo.id} className="masonry-item">
@@ -110,6 +124,7 @@ export default function MasonryGallery({
                     alt={photo.alt}
                     loading="lazy"
                     decoding="async"
+                    onLoad={handleImageLoad}
                     style={{ width: "100%", height: "auto" }}
                   />
                 </a>
