@@ -1,0 +1,29 @@
+{
+  "name": "astro-andrewfschorr",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "^7.0.3",
+    "@astrojs/react": "^4.4.2",
+    "@aws-sdk/client-s3": "^3.1005.0",
+    "astro": "^6.0.5",
+    "dotenv": "^17.3.1",
+    "photoswipe": "^5.4.4",
+    "prop-types": "^15.8.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-photoswipe-gallery": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}

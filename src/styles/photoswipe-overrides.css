@@ -1,0 +1,4 @@
+/* Disable zoom cursor on lightbox image (we disabled zoom in options) */
+.pswp .pswp__img {
+  cursor: default;
+}

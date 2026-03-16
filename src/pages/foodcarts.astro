@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Masonry from "../components/Masonry.astro";
+
+import { getCollection } from "astro:content";
+
+const foodcartPhotos = await getCollection("foodcardPhotos");
+---
+
+<Layout>
+  <Masonry photos={foodcartPhotos} />
+</Layout>

@@ -1,0 +1,33 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="about-content">
+    <p>NYC based keyboard warrior</p>
+    <p style={{ paddingTop: "5px" }}>
+      <a
+        href="https://www.instagram.com/andrewfschorr/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="about-instagram">Instagram</a
+      >
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 120px);
+    text-align: center;
+    padding: 2rem;
+  }
+  .about-instagram {
+    text-decoration: underline;
+    color: inherit;
+  }
+</style>

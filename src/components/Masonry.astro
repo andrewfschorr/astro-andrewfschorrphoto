@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from "astro:content";
+import MasonryGallery, { type MasonryPhoto } from "./MasonryGallery";
+
+type PhotoCollection = "mainPhotos" | "smokestackPhotos" | "birdPhotos" | "foodcardPhotos";
+
+type Props = {
+	photos: CollectionEntry<PhotoCollection>[];
+	gap?: string;
+	class?: string;
+};
+
+const {
+	photos,
+	gap = "16px",
+	class: className,
+} = Astro.props;
+
+const galleryPhotos: MasonryPhoto[] = photos.map((photo) => ({
+	id: photo.id,
+	src: photo.data.src,
+	width: 0,
+	height: 0,
+	alt: photo.data.alt,
+	title: photo.data.title,
+}));
+
+function shuffle<T>(arr: T[]): T[] {
+	const out = [...arr];
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
+const shuffledPhotos = shuffle(galleryPhotos);
+---
+
+<MasonryGallery
+	client:only="react"
+	gap={gap}
+	className={className}
+	photos={shuffledPhotos}
+/>
