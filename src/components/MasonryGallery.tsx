@@ -18,20 +18,33 @@ export type MasonryGalleryProps = {
   className?: string;
 };
 
+function MasonryLoading() {
+  return (
+    <div className="masonry-loading" role="status" aria-live="polite">
+      <span className="masonry-loading-spinner" aria-hidden="true" />
+      <span className="masonry-loading-text">Loading</span>
+    </div>
+  );
+}
+
 export default function MasonryGallery({
   photos,
   gap = "16px",
   className,
 }: MasonryGalleryProps) {
-  const [allLoaded, setAllLoaded] = useState(false);
-  const loadedCount = useRef(0);
+  const [allLoaded, setAllLoaded] = useState(photos.length === 0);
+  const loadedIds = useRef(new Set<string>());
 
-  const handleImageLoad = useCallback(() => {
-    loadedCount.current += 1;
-    if (loadedCount.current >= photos.length) {
-      setAllLoaded(true);
-    }
-  }, [photos.length]);
+  const markPhotoLoaded = useCallback(
+    (id: string) => {
+      if (loadedIds.current.has(id)) return;
+      loadedIds.current.add(id);
+      if (loadedIds.current.size >= photos.length) {
+        setAllLoaded(true);
+      }
+    },
+    [photos.length]
+  );
 
   const options = {
     zoom: false,
@@ -89,50 +102,56 @@ export default function MasonryGallery({
   );
 
   return (
-    <Gallery options={options} onBeforeOpen={onBeforeOpen}>
-      <ul
-        className={["masonry", className].filter(Boolean).join(" ")}
-        role="list"
-        style={{
-          ["--gap" as any]: gap,
-          opacity: allLoaded ? 1 : 0,
-          transition: "opacity 0.6s ease-in",
-        }}
-      >
-        {photos.map((photo) => (
-          <li key={photo.id} className="masonry-item">
-            <Item
-              id={photo.id}
-              original={photo.src}
-              thumbnail={photo.src}
-              width={1920}
-              height={1080}
-              caption={photo.title}
-            >
-              {({ ref, open }) => (
-                <a
-                  className="masonry-link"
-                  href={photo.src}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    open(e);
-                  }}
-                  ref={ref as unknown as React.Ref<HTMLAnchorElement>}
-                >
-                  <img
-                    src={photo.src}
-                    alt={photo.alt}
-                    loading="lazy"
-                    decoding="async"
-                    onLoad={handleImageLoad}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                </a>
-              )}
-            </Item>
-          </li>
-        ))}
-      </ul>
-    </Gallery>
+    <>
+      {!allLoaded && <MasonryLoading />}
+      <Gallery options={options} onBeforeOpen={onBeforeOpen}>
+        <ul
+          className={["masonry", className].filter(Boolean).join(" ")}
+          role="list"
+          style={{
+            ["--gap" as any]: gap,
+            opacity: allLoaded ? 1 : 0,
+            transition: "opacity 0.6s ease-in",
+          }}
+        >
+          {photos.map((photo) => (
+            <li key={photo.id} className="masonry-item">
+              <Item
+                id={photo.id}
+                original={photo.src}
+                thumbnail={photo.src}
+                width={1920}
+                height={1080}
+                caption={photo.title}
+              >
+                {({ ref, open }) => (
+                  <a
+                    className="masonry-link"
+                    href={photo.src}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      open(e);
+                    }}
+                    ref={ref as unknown as React.Ref<HTMLAnchorElement>}
+                  >
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      loading="lazy"
+                      decoding="async"
+                      onLoad={() => markPhotoLoaded(photo.id)}
+                      ref={(img) => {
+                        if (img?.complete) markPhotoLoaded(photo.id);
+                      }}
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </a>
+                )}
+              </Item>
+            </li>
+          ))}
+        </ul>
+      </Gallery>
+    </>
   );
 }
